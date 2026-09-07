@@ -143,7 +143,7 @@ function Index() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-2xl font-bold leading-none text-foreground">{kpi.valor}</p>
-                  <p className="mt-1 truncate text-xs text-muted-foreground">{kpi.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{kpi.label}</p>
                 </div>
               </CardContent>
             </Card>
