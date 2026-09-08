@@ -52,6 +52,14 @@ function formatFechaHora(iso: string) {
   });
 }
 
+function formatFechaCompacta(iso: string) {
+  return new Date(iso).toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 function validateFile(file: File): string | null {
   const mimeOk = (ALLOWED_MIME_TYPES as readonly string[]).includes(file.type);
   if (!mimeOk || !ALLOWED_EXT.test(file.name)) {
@@ -198,7 +206,9 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
         <p className="text-sm font-medium text-foreground">
           {dragging ? "Suelta los archivos aquí" : "Arrastra archivos o toca para seleccionar"}
         </p>
-        <p className="text-xs text-muted-foreground">PDF, JPG, PNG o WebP · máx. 10 MB por archivo</p>
+        <p className="text-xs text-muted-foreground">
+          PDF, JPG, PNG o WebP · máx. 10 MB por archivo
+        </p>
         <input
           ref={inputRef}
           id={inputId}
@@ -253,57 +263,68 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
         <div className="flex flex-col items-center gap-1.5 rounded-lg bg-muted/40 px-4 py-6 text-center">
           <FileText className="size-6 text-muted-foreground/50" />
           <p className="text-sm font-medium text-foreground">Aún no hay documentos</p>
-          <p className="text-xs text-muted-foreground">
-            Los archivos que subas aparecerán aquí.
-          </p>
+          <p className="text-xs text-muted-foreground">Los archivos que subas aparecerán aquí.</p>
         </div>
       ) : (
         <ul className="divide-y rounded-lg border">
           {docs.map((d) => {
             const Icon = d.mime_type === "application/pdf" ? FileText : ImageIcon;
             return (
-              <li key={d.id} className="flex items-center gap-3 p-3">
-                <div className="grid size-9 shrink-0 place-items-center rounded-md bg-accent text-accent-foreground">
-                  <Icon className="size-4" />
+              <li
+                key={d.id}
+                className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-3"
+              >
+                <div className="flex min-w-0 flex-1 items-start gap-3">
+                  <div className="grid size-9 shrink-0 place-items-center rounded-md bg-accent text-accent-foreground">
+                    <Icon className="size-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-2 break-all text-sm font-medium text-foreground sm:truncate sm:leading-normal">
+                      {d.file_name}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {formatBytes(d.file_size)} · {formatFechaCompacta(d.uploaded_at)}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">{d.file_name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatBytes(d.file_size)} · {formatFechaHora(d.uploaded_at)}
-                  </p>
+                <div className="flex items-center justify-end gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 sm:h-8 sm:w-8"
+                    aria-label={`Abrir ${d.file_name}`}
+                    disabled={openDoc.isPending && openDoc.variables === d.id}
+                    onClick={() => openDoc.mutate(d.id)}
+                  >
+                    {openDoc.isPending && openDoc.variables === d.id ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Download className="size-4" />
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 text-destructive hover:text-destructive sm:h-8 sm:w-8"
+                    aria-label={`Eliminar ${d.file_name}`}
+                    disabled={deleteDoc.isPending && deleteDoc.variables === d.id}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `¿Eliminar «${d.file_name}»? Esta acción no se puede deshacer.`,
+                        )
+                      ) {
+                        deleteDoc.mutate(d.id);
+                      }
+                    }}
+                  >
+                    {deleteDoc.isPending && deleteDoc.variables === d.id ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-4" />
+                    )}
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8"
-                  aria-label={`Abrir ${d.file_name}`}
-                  disabled={openDoc.isPending && openDoc.variables === d.id}
-                  onClick={() => openDoc.mutate(d.id)}
-                >
-                  {openDoc.isPending && openDoc.variables === d.id ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Download className="size-4" />
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8 text-destructive hover:text-destructive"
-                  aria-label={`Eliminar ${d.file_name}`}
-                  disabled={deleteDoc.isPending && deleteDoc.variables === d.id}
-                  onClick={() => {
-                    if (window.confirm(`¿Eliminar «${d.file_name}»? Esta acción no se puede deshacer.`)) {
-                      deleteDoc.mutate(d.id);
-                    }
-                  }}
-                >
-                  {deleteDoc.isPending && deleteDoc.variables === d.id ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="size-4" />
-                  )}
-                </Button>
               </li>
             );
           })}

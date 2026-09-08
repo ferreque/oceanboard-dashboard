@@ -1,24 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import {
-  Search,
-  KanbanSquare,
-  Users,
-  Clock,
-  ClipboardList,
-  Anchor,
-} from "lucide-react";
+import { Search, KanbanSquare, Users, Clock, ClipboardList, Anchor } from "lucide-react";
 
 import { ProjectDocuments } from "@/components/ProjectDocuments";
 
-import {
-  proyectos,
-  kpis,
-  FASES,
-  formatFecha,
-  type Proyecto,
-  type Estado,
-} from "@/data/projects";
+import { proyectos, kpis, FASES, formatFecha, type Proyecto, type Estado } from "@/data/projects";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -109,9 +95,7 @@ function Index() {
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     return proyectos.filter(
-      (p) =>
-        (fase === "todas" || p.fase === fase) &&
-        (!q || p.cliente.toLowerCase().includes(q)),
+      (p) => (fase === "todas" || p.fase === fase) && (!q || p.cliente.toLowerCase().includes(q)),
     );
   }, [busqueda, fase]);
 
@@ -193,11 +177,7 @@ function Index() {
             </TableHeader>
             <TableBody>
               {filtrados.map((p) => (
-                <TableRow
-                  key={p.id}
-                  className="cursor-pointer"
-                  onClick={() => setSeleccionado(p)}
-                >
+                <TableRow key={p.id} className="cursor-pointer" onClick={() => setSeleccionado(p)}>
                   <TableCell className="font-medium">{p.cliente}</TableCell>
                   <TableCell>{p.proyecto}</TableCell>
                   <TableCell>{p.fase}</TableCell>
@@ -245,7 +225,8 @@ function Index() {
                     Fase: <span className="font-medium text-foreground">{p.fase}</span>
                   </span>
                   <span>
-                    Responsable: <span className="font-medium text-foreground">{p.responsable}</span>
+                    Responsable:{" "}
+                    <span className="font-medium text-foreground">{p.responsable}</span>
                   </span>
                   <span>
                     Actualizado:{" "}
@@ -270,7 +251,7 @@ function Index() {
 
       {/* Ficha de proyecto */}
       <Sheet open={!!seleccionado} onOpenChange={(open) => !open && setSeleccionado(null)}>
-        <SheetContent className="overflow-y-auto sm:max-w-md">
+        <SheetContent className="w-full overflow-y-auto sm:max-w-md">
           {seleccionado && (
             <>
               <SheetHeader>
