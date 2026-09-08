@@ -91,7 +91,7 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
 
   const list = useServerFn(listDocuments);
   const createUrl = useServerFn(createUploadUrl);
-  const confirm = useServerFn(confirmUpload);
+  const confirmFn = useServerFn(confirmUpload);
   const getUrl = useServerFn(getDocumentUrl);
   const remove = useServerFn(deleteDocument);
 
@@ -122,7 +122,7 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
       const { path, signedUrl } = await createUrl({ data: meta });
       await uploadWithProgress(signedUrl, file, (p) => patchUpload(key, { progress: p }));
       patchUpload(key, { status: "registrando", progress: 100 });
-      const row = await confirm({ data: { ...meta, path } });
+      const row = await confirmFn({ data: { ...meta, path } });
       queryClient.setQueryData<DocumentRow[]>(queryKey, (old = []) => [row, ...old]);
       setUploads((prev) => prev.filter((u) => u.key !== key));
       toast.success(`«${file.name}» subido correctamente.`);
@@ -293,7 +293,7 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
                   aria-label={`Eliminar ${d.file_name}`}
                   disabled={deleteDoc.isPending && deleteDoc.variables === d.id}
                   onClick={() => {
-                    if (confirm(`¿Eliminar «${d.file_name}»? Esta acción no se puede deshacer.`)) {
+                    if (window.confirm(`¿Eliminar «${d.file_name}»? Esta acción no se puede deshacer.`)) {
                       deleteDoc.mutate(d.id);
                     }
                   }}

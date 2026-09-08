@@ -6,9 +6,10 @@ import {
   Users,
   Clock,
   ClipboardList,
-  FileText,
   Anchor,
 } from "lucide-react";
+
+import { ProjectDocuments } from "@/components/ProjectDocuments";
 
 import {
   proyectos,
@@ -322,13 +323,7 @@ function Index() {
 
                 <div>
                   <h3 className="text-sm font-semibold text-foreground">Documentos</h3>
-                  <div className="mt-2 flex flex-col items-center gap-2 rounded-lg border border-dashed px-4 py-10 text-center">
-                    <FileText className="size-8 text-muted-foreground/50" />
-                    <p className="text-sm font-medium text-foreground">Aún no hay documentos</p>
-                    <p className="text-xs text-muted-foreground">
-                      Aquí aparecerán los archivos vinculados a este proyecto.
-                    </p>
-                  </div>
+                  <ProjectDocuments projectId={seleccionado.id} />
                 </div>
               </div>
             </>
