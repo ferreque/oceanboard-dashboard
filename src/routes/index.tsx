@@ -270,7 +270,7 @@ function Index() {
 
       {/* Ficha de proyecto */}
       <Sheet open={!!seleccionado} onOpenChange={(open) => !open && setSeleccionado(null)}>
-        <SheetContent className="overflow-y-auto sm:max-w-md">
+        <SheetContent className="w-full overflow-y-auto sm:max-w-md">
           {seleccionado && (
             <>
               <SheetHeader>

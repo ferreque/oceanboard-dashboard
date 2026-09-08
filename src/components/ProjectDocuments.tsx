@@ -52,6 +52,14 @@ function formatFechaHora(iso: string) {
   });
 }
 
+function formatFechaCompacta(iso: string) {
+  return new Date(iso).toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 function validateFile(file: File): string | null {
   const mimeOk = (ALLOWED_MIME_TYPES as readonly string[]).includes(file.type);
   if (!mimeOk || !ALLOWED_EXT.test(file.name)) {
