@@ -206,7 +206,9 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
         <p className="text-sm font-medium text-foreground">
           {dragging ? "Suelta los archivos aquí" : "Arrastra archivos o toca para seleccionar"}
         </p>
-        <p className="text-xs text-muted-foreground">PDF, JPG, PNG o WebP · máx. 10 MB por archivo</p>
+        <p className="text-xs text-muted-foreground">
+          PDF, JPG, PNG o WebP · máx. 10 MB por archivo
+        </p>
         <input
           ref={inputRef}
           id={inputId}
@@ -261,16 +263,17 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
         <div className="flex flex-col items-center gap-1.5 rounded-lg bg-muted/40 px-4 py-6 text-center">
           <FileText className="size-6 text-muted-foreground/50" />
           <p className="text-sm font-medium text-foreground">Aún no hay documentos</p>
-          <p className="text-xs text-muted-foreground">
-            Los archivos que subas aparecerán aquí.
-          </p>
+          <p className="text-xs text-muted-foreground">Los archivos que subas aparecerán aquí.</p>
         </div>
       ) : (
         <ul className="divide-y rounded-lg border">
           {docs.map((d) => {
             const Icon = d.mime_type === "application/pdf" ? FileText : ImageIcon;
             return (
-              <li key={d.id} className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-3">
+              <li
+                key={d.id}
+                className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-3"
+              >
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <div className="grid size-9 shrink-0 place-items-center rounded-md bg-accent text-accent-foreground">
                     <Icon className="size-4" />
@@ -306,7 +309,11 @@ export function ProjectDocuments({ projectId }: { projectId: string }) {
                     aria-label={`Eliminar ${d.file_name}`}
                     disabled={deleteDoc.isPending && deleteDoc.variables === d.id}
                     onClick={() => {
-                      if (window.confirm(`¿Eliminar «${d.file_name}»? Esta acción no se puede deshacer.`)) {
+                      if (
+                        window.confirm(
+                          `¿Eliminar «${d.file_name}»? Esta acción no se puede deshacer.`,
+                        )
+                      ) {
                         deleteDoc.mutate(d.id);
                       }
                     }}
